@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.10.008">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.10.008" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="read_excel" compatibility="9.10.008" expanded="true" height="68" name="Read Excel" width="90" x="246" y="34">
+        <parameter key="excel_file" value="D:\Laptop Dataset.xlsx"/>
+        <parameter key="sheet_selection" value="sheet number"/>
+        <parameter key="sheet_number" value="1"/>
+        <parameter key="imported_cell_range" value="A1"/>
+        <parameter key="encoding" value="SYSTEM"/>
+        <parameter key="first_row_as_names" value="true"/>
+        <list key="annotations"/>
+        <parameter key="date_format" value=""/>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="read_all_values_as_polynominal" value="false"/>
+        <list key="data_set_meta_data_information">
+          <parameter key="0" value="Max Horizontal Resolution.true.polynominal.attribute"/>
+          <parameter key="1" value="Memory Technology.true.polynominal.attribute"/>
+          <parameter key="2" value="Installed Memory.true.integer.attribute"/>
+          <parameter key="3" value="Processor Speed.true.integer.attribute"/>
+          <parameter key="4" value="Processor.true.polynominal.attribute"/>
+          <parameter key="5" value="Manufacturer.true.polynominal.attribute"/>
+          <parameter key="6" value="Infrared.true.polynominal.attribute"/>
+          <parameter key="7" value="Bluetooth.true.polynominal.attribute"/>
+          <parameter key="8" value="Docking Station.true.polynominal.attribute"/>
+          <parameter key="9" value="Port Replicator.true.polynominal.attribute"/>
+          <parameter key="10" value="Fingerprint.true.polynominal.attribute"/>
+          <parameter key="11" value="Subwoofer.true.polynominal.attribute"/>
+          <parameter key="12" value="External Battery.true.polynominal.attribute"/>
+          <parameter key="13" value="CDMA.true.polynominal.attribute"/>
+          <parameter key="14" value="Operating System.true.polynominal.attribute"/>
+          <parameter key="15" value="Warranty-Days.true.integer.attribute"/>
+          <parameter key="16" value="Price.true.real.attribute"/>
+        </list>
+        <parameter key="read_not_matching_values_as_missings" value="false"/>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="9.10.008" expanded="true" height="82" name="Set Role" width="90" x="447" y="34">
+        <parameter key="attribute_name" value="Bluetooth"/>
+        <parameter key="target_role" value="label"/>
+        <list key="set_additional_roles"/>
+      </operator>
+      <operator activated="true" class="filter_examples" compatibility="9.10.008" expanded="true" height="103" name="Filter Examples" width="90" x="648" y="34">
+        <parameter key="parameter_expression" value=""/>
+        <parameter key="condition_class" value="custom_filters"/>
+        <parameter key="invert_filter" value="false"/>
+        <list key="filters_list">
+          <parameter key="filters_entry_key" value="Memory Technology.is_not_missing."/>
+          <parameter key="filters_entry_key" value="Max Horizontal Resolution.is_not_missing."/>
+          <parameter key="filters_entry_key" value="Infrared.is_not_missing."/>
+          <parameter key="filters_entry_key" value="Port Replicator.is_not_missing."/>
+          <parameter key="filters_entry_key" value="Manufacturer.is_not_missing."/>
+          <parameter key="filters_entry_key" value="Docking Station.is_not_missing."/>
+        </list>
+        <parameter key="filters_logic_and" value="true"/>
+        <parameter key="filters_check_metadata" value="true"/>
+      </operator>
+      <operator activated="true" class="concurrency:parallel_decision_tree" compatibility="9.10.008" expanded="true" height="103" name="Decision Tree" width="90" x="849" y="34">
+        <parameter key="criterion" value="gain_ratio"/>
+        <parameter key="maximal_depth" value="7"/>
+        <parameter key="apply_pruning" value="true"/>
+        <parameter key="confidence" value="0.1"/>
+        <parameter key="apply_prepruning" value="true"/>
+        <parameter key="minimal_gain" value="0.01"/>
+        <parameter key="minimal_leaf_size" value="2"/>
+        <parameter key="minimal_size_for_split" value="4"/>
+        <parameter key="number_of_prepruning_alternatives" value="3"/>
+      </operator>
+      <connect from_op="Read Excel" from_port="output" to_op="Set Role" to_port="example set input"/>
+      <connect from_op="Set Role" from_port="example set output" to_op="Filter Examples" to_port="example set input"/>
+      <connect from_op="Filter Examples" from_port="example set output" to_op="Decision Tree" to_port="training set"/>
+      <connect from_op="Decision Tree" from_port="model" to_port="result 1"/>
+      <connect from_op="Decision Tree" from_port="exampleSet" to_port="result 2"/>
+      <connect from_op="Decision Tree" from_port="weights" to_port="result 3"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <portSpacing port="sink_result 4" spacing="0"/>
+    </process>
+  </operator>
+</process>
